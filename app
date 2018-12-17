@@ -1,17 +1,9 @@
 library(timevis)
-#library(ggplot2)
 library(dplyr)
-#library(ggraph)
-#library(tidygraph)
 library(shiny)
-#library(leaflet)
-#library(htmltools)
-#library(imager)
 
 timelines_list <- readRDS("saved_timelines.Rda")
 cases_with_timelines <- names(timelines_list)
-
-#load("saved_networks.Rda")
 
 # Define UI for data upload app ----
 ui <- fluidPage(
@@ -52,47 +44,9 @@ ui <- fluidPage(
                            timevisOutput("mytime")
                          )
                        )
-              )#,
+              )
               
-              # tabPanel("Significant other network",
-              #          #  Sidebar layout with input and output definitions ----
-              #          sidebarLayout(
-              # 
-              #            #Sidebar panel for inputs ----
-              #              sidebarPanel(
-              # 
-              #                radioButtons("selected", label = h3("Select a factor to colour nodes by"),
-              #                                   choices = list("Alert", "Sex", "Relationship"),
-              #                                   selected = "Alert")
-              # 
-              #              ),
-              # 
-              #            #Main panel for displaying outputs ----
-              #            mainPanel(
-              #              # Output: ----
-              #              plotOutput("network", width = "100%")
-              #            )
-              #          )
-              )#,
-              # tabPanel("Residential locations", 
-              #          #  Sidebar layout with input and output definitions ----
-              #          sidebarLayout(
-              #            
-              #            #Sidebar panel for inputs ----
-              #            sidebarPanel(
-              #              
-              #              h3("Hover on a location for more inforamtion. Drag and zoom the map for more detail.")
-              #              
-              #            ),
-              #            
-              #            #Main panel for displaying outputs ----
-              #            mainPanel(
-              #          leafletOutput("mymap")
-              #          
-              #            )
-              #          )
-              # )
-
+  )
 )
 
 
@@ -101,13 +55,13 @@ server <- function(input, output) {
   
   output$validated <- renderUI({
     
-      selectInput("case_number", "Case number:",
-                  cases_with_timelines,
-                  selectize = FALSE)
+    selectInput("case_number", "Case number:",
+                cases_with_timelines,
+                selectize = FALSE)
     
-    })
+  })
   
-    case_order <- reactive({
+  case_order <- reactive({
     
     which(cases_with_timelines == input$case_number)
     
@@ -162,7 +116,7 @@ server <- function(input, output) {
   })
   
   date_of_event <- reactive({
-  
+    
     filtered_df()$start[as.numeric(input$mytime_selected)]
     
   })
@@ -173,88 +127,13 @@ server <- function(input, output) {
     
   )
   
-  
-  
-  
-  
-  # output$selected_text <- renderText(
-  #   
-  #   as.character(input$timeline_data$text[as.numeric(input$mytime_selected)])
-  #   
-  # )
-  
-  # output$selected_date <- renderText(
-  #   
-  #   as.character(input$timeline_data$date_as_text[as.numeric(input$mytime_selected)])
-  #   
-  # )
-  
-  # output$selected_age <- renderText(
-  #   
-  #   as.character(round(as.numeric(difftime(input$timeline_data$start[as.numeric(input$timeline_selected)], input$timeline_data$start[which(input$timeline_data$content == "Birth")])/365), digits = 1))
-  #   
-  # )
-  
   output$selected_content <-  renderText(
     
     #as.character(input$mytime_data$content[as.numeric(input$mytime_selected)])
     #as.character(input$mytime_selected)
     paste0("Additional information: ", as.character(filtered_df()$text[as.numeric(input$mytime_selected)]))
-
+    
   )
-  
-  # this_network <- reactive({
-  # 
-  #   networks[[as.numeric(input$case_number)]]
-  # 
-  # })
-  # 
-  # selected_factor <- reactive({
-  #   
-  #   input$selected
-  #   
-  # })
-  # 
-  # output$network <- renderPlot({
-  # 
-  #   ggraph(this_network()) +
-  #     geom_edge_diagonal() +
-  #     geom_node_point(alpha = 0.2, size = 10, aes(colour = get(selected_factor()))) +
-  #     geom_node_text(aes(label = paste(paste0(4, substr(ID, 6, 8), substr(ID, 2, 5)), "\n", Relationship))) + 
-  #     theme_graph() + 
-  #     labs(colour = "")
-  # 
-  # }, height = 800, width = 800)
-  # 
-  # content <- c("Residence with mother")
-  # 
-  # points <- eventReactive(input$recalc, {
-  #   cbind(c(138.538024), c(-35.994730))
-  # }, ignoreNULL = FALSE)
-  # 
-  # output$mymap <- renderLeaflet({
-  #   leaflet() %>%
-  #     addProviderTiles(providers$Stamen.TonerLite,
-  #                      options = providerTileOptions(noWrap = TRUE)
-  #     ) %>%
-  #     addMarkers(data = points()) %>%
-  #     addPopups(cbind(c(138.538024), c(-35.994730)), content)
-  # })
-  # 
-  # Name <- c("Mother's house", 
-  #           "Boyfriend's house", 
-  #           "Muggy's accomodation", 
-  #           "Housing SA accomodation")
-  # Long <- c(138.5721, 144.9612, 138.6740, 138.601)
-  # Lat <- c(-35.0255, -37.7964, -34.9103, -34.923915)
-  # 
-  # df <- data.frame(Name, Long, Lat)
-  # 
-  # output$mymap <- renderLeaflet({
-  #   leaflet(df) %>% 
-  #     addTiles() %>% #addProviderTiles(Stamen.Watercolor) %>%
-  #     addMarkers(~Long, ~Lat, label = ~htmlEscape(Name))
-  # })
   
 }
 
